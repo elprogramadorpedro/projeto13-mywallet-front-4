@@ -65,6 +65,23 @@ const Input = styled.input`
     &[disabled]{}
 `
 
+const ValueInput = styled.input`
+    width: 100%;
+    height: 58px;
+    border: none;
+    border-radius: 5px;
+    color: ${props => props.type === "credit" ? "var(--green)" : "var(--red)"};
+    font-size: 20px;
+    padding-left: 15px;
+
+    &::placeholder {}
+
+    &:disabled,
+    &[disabled]{}
+`
+
+
+
 const SubmitButton = styled.button`
     width: 100%;
     height: 46px;
@@ -171,7 +188,7 @@ export default function EditPage({transaction}) {
                             <ion-icon name="remove-circle-outline"></ion-icon>
                         </TypeButton>
                     </WrapButtons>
-                    <Input placeholder="Valor" value={writeValue(value)} onChange={readValue}/>
+                    <ValueInput type={type} placeholder="Valor" value={writeValue(value)} onChange={readValue}/>
                     <Input placeholder="Descrição" value={description} onChange={e => {setDescription(e.target.value)}}/>
                     
                     <SubmitButton onClick={() => {
