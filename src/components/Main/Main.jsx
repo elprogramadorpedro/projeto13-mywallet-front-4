@@ -22,7 +22,7 @@ const LoadingScreen = styled.div`
 
 export default function Main({}) {
 
-    const {token, user, setUser} = useContext(UserContext);
+    const {token, user, setUser, APILink} = useContext(UserContext);
     
     const [transactions, setTransactions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,9 +32,9 @@ export default function Main({}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log('token', token);
         if (!token) {
-            console.log('redirecionar!');
+            setUser(null);
+            setTransactions([]);
             navigate("/");
         }
         else {
@@ -45,15 +45,14 @@ export default function Main({}) {
 
     // API
     async function getAllData() {
-        
         if (token) {
             try {
                 if (!user) {
                     console.log('vou caçar user');
-                    await getData("http://localhost:5000/users", setUser)}
+                    await getData(APILink + "users", setUser)}
                 if (transactions.length === 0) {
                     console.log('vou caçar transactions');
-                    await getData("http://localhost:5000/transactions", setTransactions)}
+                    await getData(APILink + "transactions", setTransactions)}
                 setIsLoading(false);
             } catch {
                 navigate("/");
@@ -97,7 +96,7 @@ export default function Main({}) {
     }
 
     async function sendEditedToAPI(transaction) {
-        const url = `http://localhost:5000/transactions/${transaction.id}`;
+        const url = APILink+`transactions/${transaction.id}`;
         const config = { headers: { Authorization: `Bearer ${token}`}};
         const {value, description, type, date} = transaction;
 
@@ -108,7 +107,7 @@ export default function Main({}) {
                 console.log('tentar substituir');
                 const promise = await axios.put(url, {value, description, type, date: date.$d},config);
                 console.log('deu certo');
-                await getData("http://localhost:5000/transactions", setTransactions);
+                await getData(APILink+"transactions", setTransactions);
                 console.log("refreshed transactions!");
                 closeEditPage();
             } catch {
@@ -120,14 +119,14 @@ export default function Main({}) {
     }
 
     async function removeTransactionFromAPI(id) {
-        const url = `http://localhost:5000/transactions/${id}`;
+        const url = APILink + `transactions/${id}`;
         const config = { headers: { Authorization: `Bearer ${token}`}};
 
         if (id) {
             try {
                 const promise = await axios.delete(url, config);
                 console.log('removed from api');
-                await getData("http://localhost:5000/transactions", setTransactions);
+                await getData(APILink + "transactions", setTransactions);
                 console.log("refreshed transactions!");
                 closeEditPage();
             } catch {

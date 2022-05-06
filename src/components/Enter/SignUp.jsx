@@ -61,7 +61,7 @@ const Clickable = styled.div`
 
 export default function SignUp({}) {
     
-    const {token} = useContext(UserContext);
+    const {token, APILink} = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -82,7 +82,7 @@ export default function SignUp({}) {
     async function signUp() {
         setIsLoading(true)
         try {
-            const link = "http://localhost:5000/signUp"
+            const link = APILink + "signUp"
             const answer = await axios.post(link, {username, email, password, repeatPassword});
             navigate('/');
             setIsLoading(false)

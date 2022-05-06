@@ -64,7 +64,7 @@ const Clickable = styled.div`
 
 export default function SignIn({}) {
 
-    const {token, setToken} = useContext(UserContext);
+    const {token, setToken, APILink} = useContext(UserContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +85,7 @@ export default function SignIn({}) {
     async function logIn() {
         setIsLoading(true)
         try {
-            const link = "http://localhost:5000/signIn"
+            const link = APILink + "signIn";
             const answer = await axios.post(link, {email, password});
             const receivedToken = answer.data;
             localStorage.setItem('mywallet_token', JSON.stringify(receivedToken));

@@ -89,8 +89,8 @@ const NewButton = styled.div`
 
 export default function Wallet({}) {
 
-    const {user, setToken} = useContext(UserContext);
-    const {openEditPage} = useContext(WalletContext);
+    const {user, setToken, setUser} = useContext(UserContext);
+    const {openEditPage, setTransactions} = useContext(WalletContext);
 
     let navigate = useNavigate();
 
@@ -98,6 +98,8 @@ export default function Wallet({}) {
         if (window.confirm("Você quer sair?")) {
             window.localStorage.removeItem('mywallet_token');
             setToken(null);
+            setUser(null);
+            setTransactions([]);
             navigate("/");
         }
     }

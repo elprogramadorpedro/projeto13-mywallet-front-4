@@ -14,6 +14,8 @@ export default function App() {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
 
+    const APILink = "http://localhost:5000/";
+
     useEffect(()=>{
         if (!token) {
             const download = JSON.parse(localStorage.getItem('mywallet_token'));
@@ -24,7 +26,7 @@ export default function App() {
     }, [])
 
     return (
-        <UserContext.Provider value={{user, setUser, token, setToken}}>
+        <UserContext.Provider value={{user, setUser, token, setToken, APILink}}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<SignIn />} />
