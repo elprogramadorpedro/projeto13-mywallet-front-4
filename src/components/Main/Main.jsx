@@ -32,14 +32,12 @@ export default function Main({}) {
     useEffect(getAllData, [token])
 
     const navigate = useNavigate();
+
     if (!token) {
-        console.log('não tem token. ir pra tela inicial.');
-        // navigate("../signup");
+        navigate("/");
     }
 
-
     // API
-
     async function getAllData() {
         if (token) {
             try {
@@ -51,11 +49,10 @@ export default function Main({}) {
                     await getData("http://localhost:5000/transactions", setTransactions)}
                 setIsLoading(false);
             } catch {
-                // navigate("../signup");
+                navigate("/");
             }
         } else {
-            console.log('gente, nao tem token. como navega??');
-            // navigate("../signup");
+            navigate("/");
         }
     } 
 
