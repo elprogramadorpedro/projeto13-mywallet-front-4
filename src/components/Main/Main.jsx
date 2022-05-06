@@ -105,7 +105,7 @@ export default function Main({}) {
         if (date && type && description && value) {
             try {
                 console.log('tentar substituir');
-                const promise = await axios.put(url, {value, description, type, date: date.$d},config);
+                const promise = await axios.put(url, {value, description, type, date},config);
                 console.log('deu certo');
                 await getData(APILink+"transactions", setTransactions);
                 console.log("refreshed transactions!");

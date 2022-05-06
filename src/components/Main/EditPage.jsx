@@ -129,7 +129,31 @@ export default function EditPage({transaction}) {
     const [type, setType] = useState(transaction.type ? transaction.type : "credit");
     const [id, setId] = useState(transaction._id ? transaction._id : null);
     
-    
+    function readValue(e) {
+        const label = e.target.value;
+        let newLab = "";
+        for (let i=0; i<label.length; i++) {
+            if (Number(label[i]) >= 0) {
+                newLab += label[i];
+            }
+        }
+        let newValue = Number(newLab)/100;
+        // console.log(newValue);
+        setValue(newValue);
+    }
+
+    function writeValue(value) {
+        let decimals = value % 1;
+        let inteiros = (value - decimals).toString();
+        let inteirosLabel = "";
+        for (let i = 1; i <= inteiros.length; i++) {
+            if ((i-1) % 3 === 0 && i>1) {inteirosLabel = "." + inteirosLabel}
+            inteirosLabel = inteiros[inteiros.length - i] + inteirosLabel;
+        }
+        let dec2 = Math.round(decimals*100)
+        return inteirosLabel + "," + (dec2 < 10 ? "0" : "") + dec2;
+    }
+
 
     return (
         <Container>
@@ -147,7 +171,7 @@ export default function EditPage({transaction}) {
                             <ion-icon name="remove-circle-outline"></ion-icon>
                         </TypeButton>
                     </WrapButtons>
-                    <Input type="number" placeholder="Valor" value={value} onChange={e => {setValue(e.target.value)}}/>
+                    <Input placeholder="Valor" value={writeValue(value)} onChange={readValue}/>
                     <Input placeholder="Descrição" value={description} onChange={e => {setDescription(e.target.value)}}/>
                     
                     <SubmitButton onClick={() => {

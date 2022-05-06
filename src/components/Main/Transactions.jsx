@@ -91,6 +91,18 @@ export default function Transactions({}) {
         return soma;
     }
 
+    function writeValue(value) {
+        let decimals = value % 1;
+        let inteiros = (value - decimals).toString();
+        let inteirosLabel = "";
+        for (let i = 1; i <= inteiros.length; i++) {
+            if ((i-1) % 3 === 0 && i>1) {inteirosLabel = "." + inteirosLabel}
+            inteirosLabel = inteiros[inteiros.length - i] + inteirosLabel;
+        }
+        let dec2 = Math.round(decimals*100)
+        return inteirosLabel + "," + (dec2 < 10 ? "0" : "") + dec2;
+    }
+
     const saldo = calculaSaldo();
     const transactionsView = (
         <Content>
@@ -99,7 +111,7 @@ export default function Transactions({}) {
             </TransactionsList>
             <Bottom>
                 <Label>SALDO</Label>
-                <Total value={saldo}>{Math.abs(saldo)}</Total>
+                <Total value={saldo}>{writeValue(Math.abs(saldo))}</Total>
             </Bottom>
         </Content>
     );

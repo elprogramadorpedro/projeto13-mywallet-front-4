@@ -44,6 +44,10 @@ const SubmitButton = styled.button`
     border-radius: 5px;
     font-weight: 700;
 
+    display:flex;
+    align-items: center;
+    justify-content: center;
+
     cursor: pointer;
     :hover {background-color: var(--purple-light-hover);}
 `
