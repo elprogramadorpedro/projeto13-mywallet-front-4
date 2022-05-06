@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import UserContext from '../../contexts/UserContext';
+import axios from 'axios';
+import { ThreeDots } from 'react-loader-spinner';
 
 import Enter from './Enter';
 
@@ -40,6 +43,13 @@ const SubmitButton = styled.button`
     border: none;
     border-radius: 5px;
     font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    :hover {background-color: var(--purple-light-hover);}
 `
 
 
@@ -53,17 +63,58 @@ const Clickable = styled.div`
 
 
 export default function SignIn({}) {
+
+    const {token, setToken} = useContext(UserContext);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    let navigate = useNavigate();
+
+    if (token) {
+        navigate('/wallet');
+    }
+
+
+    function setStateOnChange(event, setStateFunction) {
+        setStateFunction(event.target.value);
+    }
+
+    async function logIn() {
+        console.log("tring to log");
+        setIsLoading(true)
+        try {
+            const link = "http://localhost:5000/signIn"
+            const answer = await axios.post(link, {email, password});
+            const receivedToken = answer.data;
+            localStorage.setItem('mywallet_token', JSON.stringify(receivedToken));
+            setToken(receivedToken);
+            navigate('/wallet');
+            setIsLoading(false)
+        } catch {
+            // console.log("errooow!");
+            setIsLoading(false)
+        }
+    }
+
+    
     
     return (
         <Enter>
             <Container>
                 <InputsContainer>
-                    <Input placeholder="E-mail" value="dasdasd"/>
-                    <Input type="password" placeholder="Senha"/>
-                    <SubmitButton>Entrar</SubmitButton>
+                    <Input placeholder="E-mail" value={email} disabled={isLoading} onChange={e => { setStateOnChange(e, setEmail) }}/>
+                    <Input type="password" placeholder="Senha" value={password} disabled={isLoading} onChange={e => { setStateOnChange(e, setPassword) }}/>
+                    <SubmitButton disabled={isLoading} onClick={e => logIn()}>
+                        {isLoading
+                            ? <ThreeDots color="#fff" height={50} width={50} />
+                            : "Entrar"}
+                    </SubmitButton>
                 </InputsContainer>
                 <Clickable>
-                    <Link to={"/signup"} >Primeira vez? Cadastre-se!</Link>
+                    {isLoading
+                        ? "Pera, estamos checando..."
+                        : <Link to={"/signup"} >Primeira vez? Cadastre-se!</Link>}
                 </Clickable>
             </Container>
         </Enter>

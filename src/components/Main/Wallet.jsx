@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-dom";
+import UserContext from '../../contexts/UserContext';
+import WalletContext from '../../contexts/WalletContext';
 import styled from 'styled-components';
 
 import Transactions from './Transactions';
@@ -22,6 +24,17 @@ const Header = styled.div`
     margin-bottom: 20px;
 
     align-items: flex-start;
+
+    height: 32px;
+
+    ion-icon {
+        cursor: pointer;
+        padding: 2px;
+        border-radius: 5px;
+        :hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+    }
 `
 
 const WelcomeLabel = styled.h1`
@@ -33,7 +46,7 @@ const WelcomeLabel = styled.h1`
 const Content = styled.div`
     flex: 1 1 auto;
     background-color: white;
-    overflow-y: scroll;
+    overflow-y: auto;
     border-radius: 5px;
 `
 
@@ -65,25 +78,45 @@ const NewButton = styled.div`
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
+
+    cursor: pointer;
+
+    :hover {
+        background-color: var(--purple-light-hover);
+    }
 `
 
 
 export default function Wallet({}) {
+
+    const {user, setToken} = useContext(UserContext);
+    const {openEditPage} = useContext(WalletContext);
+
+    let navigate = useNavigate();
+
+    function logOut() {
+        if (window.confirm("Você quer sair?")) {
+            window.localStorage.removeItem('mywallet_token');
+            setToken(null);
+            navigate("/");
+        }
+    }
+
     return (
         <Container>
             <Header>
-                <WelcomeLabel>Olá, Estevam</WelcomeLabel>
-                <ion-icon size="large" name="log-out-outline"></ion-icon>
+                <WelcomeLabel>{user.username ? `Olá, ${user.username}` : "Olá, qualquer"}</WelcomeLabel>
+                <ion-icon size="large" name="log-out-outline" onClick={e => logOut()}></ion-icon>
             </Header>
             <Content>
                 <Transactions/>
             </Content>
             <Bottom>
-                <NewButton>
+                <NewButton onClick={() => {openEditPage({type: 'credit'})}}>
                     <ion-icon name="add-circle-outline"></ion-icon>
                     <div>Nova<br/>entrada</div>
                 </NewButton>
-                <NewButton>
+                <NewButton onClick={() => {openEditPage({type: 'debt'})}}>
                     <ion-icon name="remove-circle-outline"></ion-icon>
                     <div>Nova<br/>saída</div>
                 </NewButton>

@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-dom";
 import styled from 'styled-components';
+import dayjs from 'dayjs';
+import WalletContext from '../../contexts/WalletContext';
+
 
 const Container = styled.div`
     width: 100%;
@@ -8,7 +11,6 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: baseline;
     gap: 10px;
-    cursor: pointer;
 `;
 
 const Date = styled.div`
@@ -30,30 +32,35 @@ const Delete = styled.div`
     color: var(--gray-superlight);
     text-align: right;
     width: 10px;
+    cursor: pointer;
 `;
 
 const Description = styled.div`
     flex: 1 1 auto;
     text-align: left;
     color: black;
+    cursor: pointer;
 `;
 
 const Value = styled.div`
     flex: 0 0 auto;
-    color: var(--green);
+    color: var(--${props => props.type === 'credit' ? 'green' : 'red'});
 `;
 
 
-export default function Transaction({}) {
+export default function Transaction({transaction}) {
+
+    const {description, type, value, date, _id} = transaction;
+    const {openEditPage, removeTransaction} = useContext(WalletContext);
 
     return (
         <Container>
-            <Date>01/23</Date>
+            <Date>{dayjs(date.$d).format('DD/MM')}</Date>
             <Center>
-                <Description>Alo alo dona carminha</Description>
-                <Value>29.30</Value>
+                <Description onClick={() => openEditPage(transaction)}>{description}</Description>
+                <Value type={type}>{value}</Value>
             </Center>
-            <Delete>x</Delete>
+            <Delete onClick={() => removeTransaction(_id)}>x</Delete>
         </Container>
     )
 }

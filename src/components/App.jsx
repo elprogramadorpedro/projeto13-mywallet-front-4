@@ -11,8 +11,20 @@ import Main from './Main/Main';
 
 export default function App() {
 
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
+
+    useEffect(()=>{
+        if (!token) {
+            const download = JSON.parse(localStorage.getItem('mywallet_token'));
+            if (download) {
+                setToken(download);
+            }
+        }
+    }, [])
+
     return (
-        <UserContext.Provider value={{}}>
+        <UserContext.Provider value={{user, setUser, token, setToken}}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<SignIn />} />

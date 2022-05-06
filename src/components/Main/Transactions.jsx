@@ -1,11 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-dom";
 import styled from 'styled-components';
-
+import UserContext from '../../contexts/UserContext';
+import WalletContext from '../../contexts/WalletContext';
 
 import Transaction from './Transaction';
-
-
 
 
 const Empty = styled.div`
@@ -21,7 +20,6 @@ const Empty = styled.div`
 
 
 const Content = styled.div`
-    padding: 10px;
 
     width: 100%;
     height: 100%;
@@ -38,13 +36,13 @@ const Content = styled.div`
 
 const TransactionsList = styled.div`
 
-    padding-top: 20px;
+    padding: 20px 10px;
 
     width: 100%;
     border-top: 10px;
     flex: 1 1 auto;
 
-    overflow-y: scroll;
+    overflow-y: auto;
 
     display: flex;
     flex-direction: column;
@@ -56,7 +54,7 @@ const TransactionsList = styled.div`
 
 const Bottom = styled.div`
     width: 100%;
-    margin-top: 10px;
+    padding: 10px;
     flex: 0 0 auto;
 
     display: flex;
@@ -70,27 +68,38 @@ const Label = styled.div`
 `
 
 const Total = styled.div`
-    color: var(--green);
+    color: var(--${props => props.value > 0 ? 'green' : 'red'});
 `
 
 
 
 // --------
 
-const transactions = [1, 1, 1, 1, 1, 1];
 
 export default function Transactions({}) {
 
+    const {transactions} = useContext(WalletContext);
+
     const empty = <Empty>Não há registros de<br/>entrada ou saída</Empty>;
 
+    function calculaSaldo () {
+        let soma = 0;
+        transactions.forEach(t => {
+            if (t.type === 'credit') {soma += t.value}
+            else {soma -= t.value}
+        })
+        return soma;
+    }
+
+    const saldo = calculaSaldo();
     const transactionsView = (
         <Content>
             <TransactionsList>
-                {transactions.map(t => <Transaction />)}
+                {transactions.map((t, index) => <Transaction key={index} transaction={t}/>)}
             </TransactionsList>
             <Bottom>
                 <Label>SALDO</Label>
-                <Total>405,93</Total>
+                <Total value={saldo}>{Math.abs(saldo)}</Total>
             </Bottom>
         </Content>
     );

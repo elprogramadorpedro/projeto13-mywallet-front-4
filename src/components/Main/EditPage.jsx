@@ -1,6 +1,10 @@
+import dayjs from 'dayjs';
 import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-dom";
 import styled from 'styled-components';
+import UserContext from '../../contexts/UserContext';
+import WalletContext from '../../contexts/WalletContext';
+
 
 const Container = styled.div`
     width: 100%;
@@ -14,6 +18,18 @@ const Header = styled.div`
     width: 100%;
     flex: 0 0 auto;
     margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    ion-icon {
+        --ionicon-stroke-width: 32px;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 2px;
+        border-radius: 5px;
+        :hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+    }
 `
 
 const WelcomeLabel = styled.h1`
@@ -30,7 +46,7 @@ const InputsContainer = styled.div`
 
 const Content = styled.div`
     flex: 1 1 auto;
-    overflow-y: scroll;
+    overflow-y: auto;
     border-radius: 5px;
 `
 
@@ -57,6 +73,9 @@ const SubmitButton = styled.button`
     border-radius: 5px;
     font-weight: 700;
     font-size: 20px;
+
+    cursor: pointer;
+    :hover {background-color: var(--purple-light-hover);}
 `
 
 const Bottom = styled.div`
@@ -84,7 +103,7 @@ const TypeButton = styled.div`
     height: 58px;
     padding: 10px;
     border-radius: 5px;
-    border: none;
+    border: ${props => props.selected ? "2px solid white" : "none"};
 
     display: flex;
     align-items: center;
@@ -94,28 +113,49 @@ const TypeButton = styled.div`
         --ionicon-stroke-width: 32px;
         font-size: 32px;
     }
+
+    cursor: pointer;
+    :hover {background-color: var(--purple-light-hover);}
 `
 
 
-export default function EditPage({}) {
+export default function EditPage({transaction}) {
+
+    const {submitTransaction, abortEdit} = useContext(WalletContext);
+
+    const [value, setValue] = useState(transaction.value ? transaction.value : 0);
+    const [date, setDate] = useState(transaction.date ? transaction.date : dayjs().format("DD/MM"));
+    const [description, setDescription] = useState(transaction.description ? transaction.description : "");
+    const [type, setType] = useState(transaction.type ? transaction.type : "credit");
+    const [id, setId] = useState(transaction._id ? transaction._id : null);
+    
+    
+
     return (
         <Container>
             <Header>
-                <WelcomeLabel>Nova transação</WelcomeLabel>
+                <WelcomeLabel>{`${id ? "Editar" : "Nova"} ${type === 'credit' ? "entrada" : "saída"}`}</WelcomeLabel>
+                <ion-icon name="close-outline" size="large" onClick={() => {abortEdit()}}></ion-icon>
             </Header>
             <Content>
                 <InputsContainer>
                     <WrapButtons>
-                        <TypeButton>
+                        <TypeButton selected={type === 'credit'} onClick={() => setType('credit')}>
                             <ion-icon name="add-circle-outline"></ion-icon>
                         </TypeButton>
-                        <TypeButton>
+                        <TypeButton selected={type === 'debt'} onClick={() => setType('debt')}>
                             <ion-icon name="remove-circle-outline"></ion-icon>
                         </TypeButton>
                     </WrapButtons>
-                    <Input type="number" placeholder="Valor"/>
-                    <Input placeholder="Descrição"/>
-                    <SubmitButton>Salvar</SubmitButton>
+                    <Input type="number" placeholder="Valor" value={value} onChange={e => {setValue(e.target.value)}}/>
+                    <Input placeholder="Descrição" value={description} onChange={e => {setDescription(e.target.value)}}/>
+                    
+                    <SubmitButton onClick={() => {
+                        submitTransaction({value, description, type, date, id});
+                    }}>
+                    
+                        {`${id ? "Atualizar" : "Salvar"} ${type === 'credit' ? "entrada" : "saída"}`}
+                    </SubmitButton>
                 </InputsContainer>
             </Content>
         </Container>
