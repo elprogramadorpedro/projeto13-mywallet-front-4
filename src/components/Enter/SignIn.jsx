@@ -71,9 +71,11 @@ export default function SignIn({}) {
 
     let navigate = useNavigate();
 
-    if (token) {
-        navigate('/wallet');
-    }
+    useEffect(() => {
+        if (token) {
+            navigate('/wallet');
+        }
+    },[token]);
 
 
     function setStateOnChange(event, setStateFunction) {
@@ -81,7 +83,6 @@ export default function SignIn({}) {
     }
 
     async function logIn() {
-        console.log("tring to log");
         setIsLoading(true)
         try {
             const link = "http://localhost:5000/signIn"
@@ -89,10 +90,8 @@ export default function SignIn({}) {
             const receivedToken = answer.data;
             localStorage.setItem('mywallet_token', JSON.stringify(receivedToken));
             setToken(receivedToken);
-            navigate('/wallet');
             setIsLoading(false)
         } catch {
-            // console.log("errooow!");
             setIsLoading(false)
         }
     }

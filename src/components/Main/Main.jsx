@@ -22,23 +22,30 @@ const LoadingScreen = styled.div`
 
 export default function Main({}) {
 
-    const {user, token, setUser, setToken} = useContext(UserContext);
+    const {token, user, setUser} = useContext(UserContext);
     
     const [transactions, setTransactions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState(null);
 
-    useEffect(getAllData, [token])
-
     const navigate = useNavigate();
 
-    if (!token) {
-        navigate("/");
-    }
+    useEffect(() => {
+        console.log('token', token);
+        if (!token) {
+            console.log('redirecionar!');
+            navigate("/");
+        }
+        else {
+            getAllData();
+        }
+    }, [token])
+    
 
     // API
     async function getAllData() {
+        
         if (token) {
             try {
                 if (!user) {
@@ -51,8 +58,6 @@ export default function Main({}) {
             } catch {
                 navigate("/");
             }
-        } else {
-            navigate("/");
         }
     } 
 
