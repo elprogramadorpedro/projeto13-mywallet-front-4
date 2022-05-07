@@ -48,7 +48,7 @@ const TransactionsList = styled.div`
     flex-direction: column;
     justify-content: flex-start;
 
-    gap: 25px;
+    gap: 0px;
 `
 
 

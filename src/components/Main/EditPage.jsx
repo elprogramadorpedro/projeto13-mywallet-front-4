@@ -62,7 +62,9 @@ const Input = styled.input`
     &::placeholder {}
 
     &:disabled,
-    &[disabled]{}
+    &[disabled]{
+        color: white;
+    }
 `
 
 const ValueInput = styled.input`
@@ -77,7 +79,9 @@ const ValueInput = styled.input`
     &::placeholder {}
 
     &:disabled,
-    &[disabled]{}
+    &[disabled]{
+        color: white;
+    }
 `
 
 
@@ -90,6 +94,10 @@ const SubmitButton = styled.button`
     border-radius: 5px;
     font-weight: 700;
     font-size: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     cursor: pointer;
     :hover {background-color: var(--purple-light-hover);}
@@ -114,7 +122,7 @@ const WrapButtons = styled.div`
     gap: 15px;
 `
 
-const TypeButton = styled.div`
+const TypeButton = styled.button`
     background-color: var(--purple-light);
     width: 100%;
     height: 58px;
@@ -157,7 +165,6 @@ export default function EditPage({transaction}) {
             }
         }
         let newValue = Number(newLab)/100;
-        // console.log(newValue);
         setValue(newValue);
     }
 
@@ -176,7 +183,7 @@ export default function EditPage({transaction}) {
     async function clickSubmit() {
         setIsEditing(false);
         try {
-            await submitTransaction({value, description, type, date, id});
+            const result = await submitTransaction({value, description, type, date, id});
             setIsEditing(true);
         } catch {
             setIsEditing(true);

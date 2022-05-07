@@ -11,6 +11,8 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: baseline;
     gap: 10px;
+    padding: 10px 5px;
+    border-radius: 5px;
 `;
 
 const Date = styled.div`
@@ -53,6 +55,8 @@ export default function Transaction({transaction}) {
     const {description, type, value, date, _id} = transaction;
     const {openEditPage, removeTransaction} = useContext(WalletContext);
 
+    const [isDeleting, setIsDeleting] = useState(false);
+
     function writeValue(value) {
         let decimals = value % 1;
         let inteiros = (value - decimals).toString();
@@ -65,14 +69,25 @@ export default function Transaction({transaction}) {
         return inteirosLabel + "," + (dec2 < 10 ? "0" : "") + dec2;
     }
 
+    async function tryToRemove() {
+        try {
+            setIsDeleting(true);
+            const result = await removeTransaction(_id);
+            setIsDeleting(false);
+        } catch {
+            setIsDeleting(false);
+        }
+        
+    }
+
     return (
-        <Container>
+        <Container showingDisable={isDeleting}>
             <Date>{dayjs(date).format("DD/MM")}</Date>
             <Center>
-                <Description onClick={() => openEditPage(transaction)}>{description}</Description>
+                <Description disabled={isDeleting} onClick={() => openEditPage(transaction)}>{description}</Description>
                 <Value type={type}>{writeValue(value)}</Value>
             </Center>
-            <Delete onClick={() => removeTransaction(_id)}>x</Delete>
+            <Delete disabled={isDeleting} onClick={tryToRemove}>x</Delete>
         </Container>
     )
 }

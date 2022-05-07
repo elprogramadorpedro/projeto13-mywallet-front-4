@@ -154,21 +154,35 @@ export default function Main({}) {
         }
     }
 
-    function submitTransaction (transaction) {
+    async function submitTransaction (transaction) {
         console.log('submiting... :', transaction);
         if (transaction.id) {
             console.log('put');
-            sendEditedToAPI(transaction);
+            try {
+                await sendEditedToAPI(transaction);
+                return true;
+            } catch {
+                return false;
+            }
         } else {
             console.log('post', transaction);
-            sendNewToAPI(transaction);
+            try {
+                await sendNewToAPI(transaction);
+                return true;
+            } catch {
+                return false;
+            }
         }
     }
 
-    function removeTransaction (id) {
+    async function removeTransaction (id) {
         if (window.confirm("Tem certeza que quer apagar?")) {
-            console.log("remove", id);
-            removeTransactionFromAPI(id);
+            try {
+                await removeTransactionFromAPI(id);
+                return true;
+            } catch {
+                return false;
+            }
         }
     }
 
