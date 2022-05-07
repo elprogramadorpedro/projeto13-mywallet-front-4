@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-do
 import styled from 'styled-components';
 import UserContext from '../../contexts/UserContext';
 import WalletContext from '../../contexts/WalletContext';
-
+import { ThreeDots } from 'react-loader-spinner';
 
 const Container = styled.div`
     width: 100%;
@@ -146,6 +146,8 @@ export default function EditPage({transaction}) {
     const [type, setType] = useState(transaction.type ? transaction.type : "credit");
     const [id, setId] = useState(transaction._id ? transaction._id : null);
     
+    const [isEditing, setIsEditing] = useState(true);
+
     function readValue(e) {
         const label = e.target.value;
         let newLab = "";
@@ -171,6 +173,16 @@ export default function EditPage({transaction}) {
         return inteirosLabel + "," + (dec2 < 10 ? "0" : "") + dec2;
     }
 
+    async function clickSubmit() {
+        setIsEditing(false);
+        try {
+            await submitTransaction({value, description, type, date, id});
+            setIsEditing(true);
+        } catch {
+            setIsEditing(true);
+        }
+    }
+
 
     return (
         <Container>
@@ -181,21 +193,22 @@ export default function EditPage({transaction}) {
             <Content>
                 <InputsContainer>
                     <WrapButtons>
-                        <TypeButton selected={type === 'credit'} onClick={() => setType('credit')}>
+                        <TypeButton disabled={!isEditing} selected={type === 'credit'} onClick={() => setType('credit')}>
                             <ion-icon name="add-circle-outline"></ion-icon>
                         </TypeButton>
-                        <TypeButton selected={type === 'debt'} onClick={() => setType('debt')}>
+                        <TypeButton disabled={!isEditing} selected={type === 'debt'} onClick={() => setType('debt')}>
                             <ion-icon name="remove-circle-outline"></ion-icon>
                         </TypeButton>
                     </WrapButtons>
-                    <ValueInput type={type} placeholder="Valor" value={writeValue(value)} onChange={readValue}/>
-                    <Input placeholder="Descrição" value={description} onChange={e => {setDescription(e.target.value)}}/>
+
+                    <ValueInput disabled={!isEditing} type={type} placeholder="Valor" value={writeValue(value)} onChange={readValue}/>
+                    <Input disabled={!isEditing} placeholder="Descrição" value={description} onChange={e => {setDescription(e.target.value)}}/>
                     
-                    <SubmitButton onClick={() => {
-                        submitTransaction({value, description, type, date, id});
-                    }}>
-                    
-                        {`${id ? "Atualizar" : "Salvar"} ${type === 'credit' ? "entrada" : "saída"}`}
+                    <SubmitButton disabled={!isEditing} onClick={clickSubmit}>
+                        {isEditing
+                            ? (`${id ? "Atualizar" : "Salvar"} ${type === 'credit' ? "entrada" : "saída"}`)
+                            : <ThreeDots color="#fff" height={50} width={50} />
+                        }
                     </SubmitButton>
                 </InputsContainer>
             </Content>
