@@ -76,7 +76,7 @@ export default function Main({}) {
         const url = APILink + "transactions";
         const config = { headers: { Authorization: `Bearer ${token}`}};
         const {value, description, type} = transaction;
-        const date = dayjs().format("DD/MM/yyyy");
+        const date = dayjs().format("DD/MM/YYYY");
 
         console.log(date, type, description, value);
 
