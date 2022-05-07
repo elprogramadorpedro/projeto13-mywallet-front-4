@@ -67,7 +67,7 @@ export default function Transaction({transaction}) {
 
     return (
         <Container>
-            <Date>{date}</Date>
+            <Date>{dayjs(date).format("DD/MM")}</Date>
             <Center>
                 <Description onClick={() => openEditPage(transaction)}>{description}</Description>
                 <Value type={type}>{writeValue(value)}</Value>

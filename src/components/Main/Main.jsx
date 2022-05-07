@@ -73,10 +73,10 @@ export default function Main({}) {
     }
 
     async function sendNewToAPI(transaction) {
-        const url = "http://localhost:5000/transactions";
+        const url = APILink + "transactions";
         const config = { headers: { Authorization: `Bearer ${token}`}};
         const {value, description, type} = transaction;
-        const date = dayjs().format("DD/MM");
+        const date = dayjs().format("DD/MM/yyyy");
 
         console.log(date, type, description, value);
 
@@ -84,7 +84,7 @@ export default function Main({}) {
             try {
                 const promise = await axios.post(url, {value, description, type, date},config);
                 console.log('saved in api');
-                await getData("http://localhost:5000/transactions", setTransactions);
+                await getData(APILink+"transactions", setTransactions);
                 console.log("refreshed transactions!");
                 closeEditPage();
             } catch {
@@ -160,7 +160,7 @@ export default function Main({}) {
             console.log('put');
             sendEditedToAPI(transaction);
         } else {
-            console.log('post');
+            console.log('post', transaction);
             sendNewToAPI(transaction);
         }
     }
